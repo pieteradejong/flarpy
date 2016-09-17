@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
+        a: $('input[name="a"]').val(),
+        b: $('input[name="b"]').val()
+      }, function(data) {
+        $('#result').text(data.result);
+        $('input[name=a]').focus().select();
+      });
+      return false;
+    };
+    //
+    $('a#calcstopwords').bind('click', function() {
+      console.log($('input[name="c"]').val().split(" "));
+      $.getJSON($SCRIPT_ROOT + '/get_num_stopwords', {
+        wordsArray: $('input[name="c"]').val().split(" "),
+      }, function(data) {
+        console.log(data.result);
+        $("#resultstopwords").text(data.result);
+
+      });
+      return false;
+    });
+
+    $('a#calculate').bind('click', submit_form);
+
+    $('input[type=text]').bind('keyup', function(e) {
+      var typed = $('input[name="a"]').val();
+      $('div#typinghere').text(typed);
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+
+    $('input[name=c]').bind('keyup', function(e) {
+      var parsedStr = $('input[name="c"]').val().trim().replace(/\s+/g, ' ');
+      var wordCount;
+      if (parsedStr.length > 0) {
+        wordCount = parsedStr.split(" ").length;
+      }
+      else {
+        wordCount = 0;
+      }
+      $('div#typinghere').text(wordCount);
+      
+    });
+
+    $('input[name=a]').focus();
+  });
+</script>
+<h1>flask app</h1>
+<p>
+  <input type="text" size="5" name="a"> +
+  <input type="text" size="5" name="b"> =
+  <p><a href=# id="calculate">calculate server side</a>
+  <span id="result">?</span>
+  
+<br /><br /><br />
+  <input type="text" size="1000" name="c">
+  <div id="typinghere"></div>
+  <p><a href=# id="calcstopwords">calculate count stop words</a>
+    <div id="resultstopwords"></div>
+
+{% endblock %}
